@@ -1,0 +1,3 @@
+/home/sindre/GITHUB/WarGame_CppNdCapstone/build/CMakeFiles/rebuild_cache.dir
+/home/sindre/GITHUB/WarGame_CppNdCapstone/build/CMakeFiles/edit_cache.dir
+/home/sindre/GITHUB/WarGame_CppNdCapstone/build/CMakeFiles/WarGame.dir

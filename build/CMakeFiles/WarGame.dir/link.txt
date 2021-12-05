@@ -1,0 +1,1 @@
+/usr/bin/c++     CMakeFiles/WarGame.dir/src/main.cpp.o CMakeFiles/WarGame.dir/src/game.cpp.o CMakeFiles/WarGame.dir/src/controller.cpp.o CMakeFiles/WarGame.dir/src/renderer.cpp.o CMakeFiles/WarGame.dir/src/snake.cpp.o  -o WarGame  -lSDL2 
