@@ -25,10 +25,11 @@ In this project, you can build your own C++ application or extend this Snake gam
   
 ### Installing SDL2
 
-On Ubuntu, the SDL package can be installed by running:
+On Ubuntu, the SDL package can be installed by running the following:
 
 ```
 sudo apt install cmake libsdl2-dev
+sudo apt install libsdl2-image-dev
 ```
 
 ## Basic Build Instructions
