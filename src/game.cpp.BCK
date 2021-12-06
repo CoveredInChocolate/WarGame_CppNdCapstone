@@ -7,9 +7,7 @@ Game::Game(std::size_t grid_width, std::size_t grid_height)
       engine(dev()),
       random_w(0, static_cast<int>(grid_width - 1)),
       random_h(0, static_cast<int>(grid_height - 1)) {
-  PlaceFood1();
-  PlaceFood2();
-  PlaceFood3();
+  PlaceFood();
 }
 
 void Game::Run(Controller const &controller, Renderer &renderer,
@@ -27,7 +25,7 @@ void Game::Run(Controller const &controller, Renderer &renderer,
     // Input, Update, Render - the main game loop.
     controller.HandleInput(running, snake);
     Update();
-    renderer.Render(snake, food1, food2, food3);
+    renderer.Render(snake, food);
 
     frame_end = SDL_GetTicks();
 
@@ -52,7 +50,7 @@ void Game::Run(Controller const &controller, Renderer &renderer,
   }
 }
 
-void Game::PlaceFood1() {
+void Game::PlaceFood() {
   int x, y;
   while (true) {
     x = random_w(engine);
@@ -60,38 +58,8 @@ void Game::PlaceFood1() {
     // Check that the location is not occupied by a snake item before placing
     // food.
     if (!snake.SnakeCell(x, y)) {
-      food1.x = x;
-      food1.y = y;
-      return;
-    }
-  }
-}
-
-void Game::PlaceFood2() {
-  int x, y;
-  while (true) {
-    x = random_w(engine);
-    y = random_h(engine);
-    // Check that the location is not occupied by a snake item before placing
-    // food.
-    if (!snake.SnakeCell(x, y)) {
-      food2.x = x;
-      food2.y = y;
-      return;
-    }
-  }
-}
-
-void Game::PlaceFood3() {
-  int x, y;
-  while (true) {
-    x = random_w(engine);
-    y = random_h(engine);
-    // Check that the location is not occupied by a snake item before placing
-    // food.
-    if (!snake.SnakeCell(x, y)) {
-      food3.x = x;
-      food3.y = y;
+      food.x = x;
+      food.y = y;
       return;
     }
   }
@@ -106,25 +74,13 @@ void Game::Update() {
   int new_y = static_cast<int>(snake.head_y);
 
   // Check if there's food over here
-  if (food1.x == new_x && food1.y == new_y) {
+  if (food.x == new_x && food.y == new_y) {
     score++;
-    PlaceFood1();
+    PlaceFood();
     // Grow snake and increase speed.
     snake.GrowBody();
     snake.speed += 0.005;
-  } else if (food2.x == new_x && food2.y == new_y) {
-    score++;
-    PlaceFood2();
-    // Grow snake and increase speed.
-    snake.GrowBody();
-    snake.speed += 0.005;
-  }  else if (food3.x == new_x && food3.y == new_y) {
-    score++;
-    PlaceFood3();
-    // Grow snake and increase speed.
-    snake.GrowBody();
-    snake.speed += 0.005;
-  } 
+  }
 }
 
 int Game::GetScore() const { return score; }

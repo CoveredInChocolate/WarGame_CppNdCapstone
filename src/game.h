@@ -17,7 +17,9 @@ class Game {
 
  private:
   Snake snake;
-  SDL_Point food;
+  SDL_Point food1;
+  SDL_Point food2;
+  SDL_Point food3;
 
   std::random_device dev;
   std::mt19937 engine;
@@ -26,7 +28,11 @@ class Game {
 
   int score{0};
 
-  void PlaceFood();
+  //void PlaceFood();
+  // Very inelegant, but three separate functions
+  void PlaceFood1();
+  void PlaceFood2();
+  void PlaceFood3();
   void Update();
 };
 

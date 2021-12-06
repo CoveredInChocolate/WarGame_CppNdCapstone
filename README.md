@@ -36,7 +36,7 @@ sudo apt install cmake libsdl2-dev
 1. Clone this repo.
 2. Make a build directory in the top level directory: `mkdir build && cd build`
 3. Compile: `cmake .. && make`
-4. Run it: `./WarGane`.
+4. Run it: `./WarGame`.
 
 
 ## CC Attribution-ShareAlike 4.0 International
@@ -52,3 +52,9 @@ This work is licensed under a
 [cc-by-sa]: http://creativecommons.org/licenses/by-sa/4.0/
 [cc-by-sa-image]: https://licensebuttons.net/l/by-sa/4.0/88x31.png
 [cc-by-sa-shield]: https://img.shields.io/badge/License-CC%20BY--SA%204.0-lightgrey.svg
+
+## Resources Used
+
+Here is a tutorial for using SDL2 in C++ which I think I will use a bit.
+
+* https://lazyfoo.net/tutorials/SDL/

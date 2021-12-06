@@ -40,6 +40,14 @@ game.h
 renderer.h
 /home/sindre/GITHUB/WarGame_CppNdCapstone/src/renderer.h
 
+/home/sindre/GITHUB/WarGame_CppNdCapstone/src/renderer.cpp
+renderer.h
+/home/sindre/GITHUB/WarGame_CppNdCapstone/src/renderer.h
+iostream
+-
+string
+-
+
 /home/sindre/GITHUB/WarGame_CppNdCapstone/src/renderer.h
 vector
 -
