@@ -138,8 +138,45 @@ int main(int argc, char ** argv)
     SDL_RenderCopy(renderer, mrnText, &srcrectMRND_7, &dstrectMRND_7);
     SDL_RenderCopy(renderer, mrnText, &srcrectMRND_8, &dstrectMRND_8);
 
+    // All Turret Sprites
+    int gunSize = 90;
+    SDL_Surface * gg = SDL_LoadBMP("gluegun_anim.bmp");
+    SDL_Texture * ggText = SDL_CreateTextureFromSurface(renderer, gg);
+    SDL_Rect srcrectGUN_NN = { 0, 0, 80, 75 };
+    SDL_Rect dstrectGUN_NN = { 800, 600, gunSize, gunSize };
+    SDL_Rect srcrectGUN_NE = { 560, 0, 80, 75 };
+    SDL_Rect dstrectGUN_NE = { 800, 500, gunSize, gunSize };
+    SDL_Rect srcrectGUN_EE = { 1206, 0, 80, 75 };
+    SDL_Rect dstrectGUN_EE = { 800, 400, gunSize, gunSize };
+    SDL_Rect srcrectGUN_SE = { 560, 75, 80, 75 };
+    SDL_Rect dstrectGUN_SE = { 800, 300, gunSize, gunSize };
+    SDL_Rect srcrectGUN_SS = { 1206, 75, 80, 75 };
+    SDL_Rect dstrectGUN_SS = { 900, 600, gunSize, gunSize };
+    SDL_Rect srcrectGUN_SW = { 560, 148, 80, 75 };
+    SDL_Rect dstrectGUN_SW = { 900, 500, gunSize, gunSize };
+    SDL_Rect srcrectGUN_WW = { 1196, 150, 80, 75 };
+    SDL_Rect dstrectGUN_WW = { 900, 400, gunSize, gunSize };
+    SDL_Rect srcrectGUN_NW = { 560, 219, 80, 75 };
+    SDL_Rect dstrectGUN_NW = { 900, 300, gunSize, gunSize };
+    SDL_RenderCopy(renderer, ggText, &srcrectGUN_NN, &dstrectGUN_NN);
+    SDL_RenderCopy(renderer, ggText, &srcrectGUN_NE, &dstrectGUN_NE);
+    SDL_RenderCopy(renderer, ggText, &srcrectGUN_EE, &dstrectGUN_EE);
+    SDL_RenderCopy(renderer, ggText, &srcrectGUN_SE, &dstrectGUN_SE);
+    SDL_RenderCopy(renderer, ggText, &srcrectGUN_SS, &dstrectGUN_SS);
+    SDL_RenderCopy(renderer, ggText, &srcrectGUN_SW, &dstrectGUN_SW);
+    SDL_RenderCopy(renderer, ggText, &srcrectGUN_WW, &dstrectGUN_WW);
+    SDL_RenderCopy(renderer, ggText, &srcrectGUN_NW, &dstrectGUN_NW);
+
     // Create animation
     SDL_RenderPresent(renderer);
+
+    // Loading muzzle
+    //int muzzleSize = 20;
+    SDL_Surface * mzImg = SDL_LoadBMP("muzzle_EE.bmp");
+    SDL_Texture * mzlText = SDL_CreateTextureFromSurface(renderer, mzImg);
+    SDL_Rect srcrectMUZZLE = { 50, 50, 100, 50 };
+    SDL_Rect dstrectMUZZLE = { 1000, 100, 70, 35 };
+    SDL_RenderCopy(renderer, mzlText, &srcrectMUZZLE, &dstrectMUZZLE);
 
     SDL_Rect srcrectAN;
     SDL_Rect dstrectAN;
@@ -199,6 +236,18 @@ int main(int argc, char ** argv)
         SDL_RenderCopy(renderer, mrnText, &srcrectMRND_8, &dstrectMRND_8);
         SDL_RenderCopy(renderer, mrnText, &srcrectAN, &dstrectAN);
         SDL_RenderCopy(renderer, mrnText, &srcrectDAN, &dstrectDAN);
+        // GUN
+        SDL_RenderCopy(renderer, ggText, &srcrectGUN_NN, &dstrectGUN_NN);
+        SDL_RenderCopy(renderer, ggText, &srcrectGUN_NE, &dstrectGUN_NE);
+        SDL_RenderCopy(renderer, ggText, &srcrectGUN_EE, &dstrectGUN_EE);
+        SDL_RenderCopy(renderer, ggText, &srcrectGUN_SE, &dstrectGUN_SE);
+        SDL_RenderCopy(renderer, ggText, &srcrectGUN_SS, &dstrectGUN_SS);
+        SDL_RenderCopy(renderer, ggText, &srcrectGUN_SW, &dstrectGUN_SW);
+        SDL_RenderCopy(renderer, ggText, &srcrectGUN_WW, &dstrectGUN_WW);
+        SDL_RenderCopy(renderer, ggText, &srcrectGUN_NW, &dstrectGUN_NW);
+
+        // Turret Muzzle
+        SDL_RenderCopy(renderer, mzlText, &srcrectMUZZLE, &dstrectMUZZLE);
 
         //SDL_RenderCopy(renderer, texture, NULL, NULL);
         SDL_RenderPresent(renderer);
