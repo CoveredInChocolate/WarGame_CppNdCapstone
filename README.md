@@ -56,6 +56,7 @@ This work is licensed under a
 
 ## Resources Used
 
-Here is a tutorial for using SDL2 in C++ which I think I will use a bit.
+Here are a few tutorials for using SDL2 in C++ which I think I will use a bit.
 
+* https://gigi.nullneuron.net/gigilabs/writing/sdl2-tutorials/
 * https://lazyfoo.net/tutorials/SDL/

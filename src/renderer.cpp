@@ -36,6 +36,9 @@ Renderer::Renderer(const std::size_t screen_width,
 }
 
 Renderer::~Renderer() {
+  //SDL_DestroyTexture(texture);
+  //SDL_FreeSurface(image);
+  SDL_DestroyRenderer(sdl_renderer);
   SDL_DestroyWindow(sdl_window);
   SDL_Quit();
 }
@@ -47,11 +50,16 @@ SDL_Point const &food2, SDL_Point const &food3) {
   block.h = screen_height / grid_height;
 
   // Clear screen
-  SDL_SetRenderDrawColor(sdl_renderer, 0x1E, 0x1E, 0x1E, 0xFF);
+  SDL_SetRenderDrawColor(sdl_renderer, 0x05, 0x05, 0x05, 0xFF);
   SDL_RenderClear(sdl_renderer);
 
   // Render grassy background
-  //sdl_surf = IMG_Load("assets/grass.jpg");
+  SDL_Surface * image = SDL_LoadBMP("assets/grass.bmp");
+  SDL_Texture * texture = SDL_CreateTextureFromSurface(sdl_renderer, image);
+  SDL_Rect dstrect = { 5, 5, 64, 64 };
+  SDL_RenderCopy(sdl_renderer, texture, NULL, &dstrect);
+  //SDL_RenderCopy(sdl_renderer, texture, NULL, NULL);
+  //SDL_RenderPresent(sdl_renderer);
 
   // Render food
   SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0xCC, 0x00, 0xFF);
