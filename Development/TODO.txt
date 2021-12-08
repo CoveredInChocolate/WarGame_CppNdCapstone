@@ -1,9 +1,16 @@
-- Animate muzzle flash
+X Animate muzzle flash
 - Animate attacking marines
-- Set mouse pointer to crosshairs
+/ Set mouse pointer to crosshairs
 ### Next stage
-- Define 8 quadrants
-- Turret adjusts itself to pointer
+X Define 8 quadrants
+X Turret adjusts itself to pointer
 ### Enemies
 - Spawn marines that walk towards center
 - Fire when close to turret
+### Functionality
+- Define hitboxes
+- Set death animation when marine is hit
+- Set turret hit points
+- Explode and Game Over screen when hit points reach 0
+- Count killed marines and display
+- Progressively send more marines
