@@ -1,0 +1,9 @@
+- Animate muzzle flash
+- Animate attacking marines
+- Set mouse pointer to crosshairs
+### Next stage
+- Define 8 quadrants
+- Turret adjusts itself to pointer
+### Enemies
+- Spawn marines that walk towards center
+- Fire when close to turret

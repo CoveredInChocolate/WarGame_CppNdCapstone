@@ -167,16 +167,60 @@ int main(int argc, char ** argv)
     SDL_RenderCopy(renderer, ggText, &srcrectGUN_WW, &dstrectGUN_WW);
     SDL_RenderCopy(renderer, ggText, &srcrectGUN_NW, &dstrectGUN_NW);
 
+    // Game Over
+    float explosionSize = 0.8;
+    SDL_Surface * govr = SDL_LoadBMP("GameOver.bmp");
+    SDL_Texture * goverText = SDL_CreateTextureFromSurface(renderer, govr);
+    SDL_Rect srcrectGover = { 5, 5, 390, 320 };
+    SDL_Rect dstrectGover = { 500, 50, explosionSize*321, explosionSize*385 };
+    SDL_RenderCopy(renderer, goverText, &srcrectGover, &dstrectGover);
+
     // Create animation
     SDL_RenderPresent(renderer);
 
     // Loading muzzle
-    //int muzzleSize = 20;
-    SDL_Surface * mzImg = SDL_LoadBMP("muzzle_EE.bmp");
-    SDL_Texture * mzlText = SDL_CreateTextureFromSurface(renderer, mzImg);
-    SDL_Rect srcrectMUZZLE = { 50, 50, 100, 50 };
-    SDL_Rect dstrectMUZZLE = { 1000, 100, 70, 35 };
-    SDL_RenderCopy(renderer, mzlText, &srcrectMUZZLE, &dstrectMUZZLE);
+    float muzzleSizeFactor = 0.7;
+    SDL_Surface * mzImgEE = SDL_LoadBMP("muzzle_EE.bmp");
+    SDL_Texture * mzlTextEE = SDL_CreateTextureFromSurface(renderer, mzImgEE);
+    SDL_Rect srcrectMUZZLE_EE = { 50, 50, 100, 50 };
+    SDL_Rect dstrectMUZZLE_EE = { 1000, 200, muzzleSizeFactor*100, muzzleSizeFactor*50 };
+    SDL_Surface * mzImgNE = SDL_LoadBMP("muzzle_NE.bmp");
+    SDL_Texture * mzlTextNE = SDL_CreateTextureFromSurface(renderer, mzImgNE);
+    SDL_Rect srcrectMUZZLE_NE = { 83, 88, 78, 73 };
+    SDL_Rect dstrectMUZZLE_NE = { 1000, 100, muzzleSizeFactor*78, muzzleSizeFactor*73 };
+    SDL_Surface * mzImgNN = SDL_LoadBMP("muzzle_NN.bmp");
+    SDL_Texture * mzlTextNN = SDL_CreateTextureFromSurface(renderer, mzImgNN);
+    SDL_Rect srcrectMUZZLE_NN = { 45, 55, 58, 100 };
+    SDL_Rect dstrectMUZZLE_NN = { 1000, 300, muzzleSizeFactor*58, muzzleSizeFactor*100 };
+    SDL_Surface * mzImgNW = SDL_LoadBMP("muzzle_NW.bmp");
+    SDL_Texture * mzlTextNW = SDL_CreateTextureFromSurface(renderer, mzImgNW);
+    SDL_Rect srcrectMUZZLE_NW = { 86, 96, 79, 79 };
+    SDL_Rect dstrectMUZZLE_NW = { 1000, 400, muzzleSizeFactor*79, muzzleSizeFactor*79 };
+    SDL_Surface * mzImgSE = SDL_LoadBMP("muzzle_SE.bmp");
+    SDL_Texture * mzlTextSE = SDL_CreateTextureFromSurface(renderer, mzImgSE);
+    SDL_Rect srcrectMUZZLE_SE = { 90, 80, 82, 80 };
+    SDL_Rect dstrectMUZZLE_SE = { 1100, 100, muzzleSizeFactor*82, muzzleSizeFactor*80 };
+    SDL_Surface * mzImgSS = SDL_LoadBMP("muzzle_SS.bmp");
+    SDL_Texture * mzlTextSS = SDL_CreateTextureFromSurface(renderer, mzImgSS);
+    SDL_Rect srcrectMUZZLE_SS = { 60, 50, 56, 92 };
+    SDL_Rect dstrectMUZZLE_SS = { 1100, 200, muzzleSizeFactor*56, muzzleSizeFactor*92 };
+    SDL_Surface * mzImgSW = SDL_LoadBMP("muzzle_SW.bmp");
+    SDL_Texture * mzlTextSW = SDL_CreateTextureFromSurface(renderer, mzImgSW);
+    SDL_Rect srcrectMUZZLE_SW = { 94, 88, 82, 81 };
+    SDL_Rect dstrectMUZZLE_SW = { 1100, 300, muzzleSizeFactor*82, muzzleSizeFactor*81 };
+    SDL_Surface * mzImgWW = SDL_LoadBMP("muzzle_WW.bmp");
+    SDL_Texture * mzlTextWW = SDL_CreateTextureFromSurface(renderer, mzImgWW);
+    SDL_Rect srcrectMUZZLE_WW = { 57, 61, 98, 51 };
+    SDL_Rect dstrectMUZZLE_WW = { 1100, 400, muzzleSizeFactor*98, muzzleSizeFactor*51 };
+
+    SDL_RenderCopy(renderer, mzlTextEE, &srcrectMUZZLE_EE, &dstrectMUZZLE_EE);
+    SDL_RenderCopy(renderer, mzlTextNE, &srcrectMUZZLE_NE, &dstrectMUZZLE_NE);
+    SDL_RenderCopy(renderer, mzlTextNN, &srcrectMUZZLE_NN, &dstrectMUZZLE_NN);
+    SDL_RenderCopy(renderer, mzlTextNW, &srcrectMUZZLE_NW, &dstrectMUZZLE_NW);
+    SDL_RenderCopy(renderer, mzlTextSE, &srcrectMUZZLE_SE, &dstrectMUZZLE_SE);
+    SDL_RenderCopy(renderer, mzlTextSS, &srcrectMUZZLE_SS, &dstrectMUZZLE_SS);
+    SDL_RenderCopy(renderer, mzlTextSW, &srcrectMUZZLE_SW, &dstrectMUZZLE_SW);
+    SDL_RenderCopy(renderer, mzlTextWW, &srcrectMUZZLE_WW, &dstrectMUZZLE_WW);
 
     SDL_Rect srcrectAN;
     SDL_Rect dstrectAN;
@@ -247,7 +291,18 @@ int main(int argc, char ** argv)
         SDL_RenderCopy(renderer, ggText, &srcrectGUN_NW, &dstrectGUN_NW);
 
         // Turret Muzzle
-        SDL_RenderCopy(renderer, mzlText, &srcrectMUZZLE, &dstrectMUZZLE);
+        SDL_RenderCopy(renderer, mzlTextEE, &srcrectMUZZLE_EE, &dstrectMUZZLE_EE);
+        SDL_RenderCopy(renderer, mzlTextNE, &srcrectMUZZLE_NE, &dstrectMUZZLE_NE);
+        SDL_RenderCopy(renderer, mzlTextNN, &srcrectMUZZLE_NN, &dstrectMUZZLE_NN);
+        SDL_RenderCopy(renderer, mzlTextNW, &srcrectMUZZLE_NW, &dstrectMUZZLE_NW);
+        SDL_RenderCopy(renderer, mzlTextSE, &srcrectMUZZLE_SE, &dstrectMUZZLE_SE);
+        SDL_RenderCopy(renderer, mzlTextSS, &srcrectMUZZLE_SS, &dstrectMUZZLE_SS);
+        SDL_RenderCopy(renderer, mzlTextSW, &srcrectMUZZLE_SW, &dstrectMUZZLE_SW);
+        SDL_RenderCopy(renderer, mzlTextWW, &srcrectMUZZLE_WW, &dstrectMUZZLE_WW);
+
+        // Game Over
+        SDL_RenderCopy(renderer, goverText, &srcrectGover, &dstrectGover);
+
 
         //SDL_RenderCopy(renderer, texture, NULL, NULL);
         SDL_RenderPresent(renderer);
