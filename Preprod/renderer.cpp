@@ -200,16 +200,19 @@ void Renderer::Render() {
         SDL_RenderCopy(renderer, grassTexture, NULL, &gr2rect);
         SDL_RenderCopy(renderer, grassTexture, NULL, &gr3rect);
         SDL_RenderCopy(renderer, grassTexture, NULL, &gr4rect);
+        
         // TREES
         SDL_RenderCopy(renderer, tree1text, NULL, &t1rect);
         SDL_RenderCopy(renderer, tree2text, NULL, &t2rect);
         SDL_RenderCopy(renderer, tree3text, NULL, &t3rect);
+
         // TURRET
         gunSource = turret.GetTextureSource(QUADRANT);
         gunDest = turret.GetTextureDestination(QUADRANT);
         gunSRC = { gunSource[0], gunSource[1], gunSource[2], gunSource[3] };
         gunDST = { gunDest[0], gunDest[1], gunDest[2], gunDest[3] };
         SDL_RenderCopy(renderer, ggText, &gunSRC, &gunDST);
+
         // MUZZLE FLASH
         muzzleSource = turret.GetMuzzleSource(QUADRANT);
         muzzleDest = turret.GetMuzzleDestination(QUADRANT);
