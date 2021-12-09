@@ -1,5 +1,6 @@
 #include "renderer.h"
 #include "turret.h"
+#include "marine.h"
 #include <iostream>
 #include <vector>
 #include <string>
@@ -62,6 +63,9 @@ void Renderer::Render() {
     int xcorr, ycorr;
     int QUADRANT;
 
+    // Hitbox variale
+    std::vector<int> hitbox;
+
 
     // -------------------------- Load assets and sprites
     // Grass
@@ -122,13 +126,7 @@ void Renderer::Render() {
     SDL_FreeSurface(mzImgSS);
     SDL_FreeSurface(mzImgSW);
     SDL_Texture * mzlAN = mzNN;
-    // std::vector<SDL_Texture*> mzlAN;
-    // mzlAN.emplace_back(mzWW);
-    // mzlAN.emplace_back(mzNW);
-    // mzlAN.emplace_back(mzNN);
     std::vector<SDL_Texture*> mzlANV = {mzWW, mzNW, mzNN, mzNE, mzEE, mzSE, mzSS, mzSW};
-    // std::cout << "ORIG VAL: " << mzNN << "\n";
-    // std::cout << "VECT VAL: " << mzlANV << "\n";
 
     // Points North by default
     std::vector<int> gunSource = turret.GetTextureSource(3);
@@ -139,11 +137,30 @@ void Renderer::Render() {
     std::vector<int> muzzleDest = turret.GetMuzzleDestination(3);
     SDL_Rect mzlSRC = { muzzleSource[0], muzzleSource[1], muzzleSource[2], muzzleSource[3] };
     SDL_Rect mzlDST = { muzzleDest[0], muzzleDest[1], muzzleDest[2], muzzleDest[3] };
-    //std::cout << "VALS: " << gunSource << "\n";
-    // for ( int i = 0; i < 4; i++ ) {
-    //   std::cout << "VALS: ";
-    //   std::cout << gunSource[i] << "\n";
-    // }
+
+    SDL_Surface * mimg = SDL_LoadBMP("assets/scmarine_cut_mirror_shadows.bmp");
+    SDL_Texture * mrnText = SDL_CreateTextureFromSurface(renderer, mimg);
+    SDL_FreeSurface(mimg);
+
+    // Initializing Marine vector
+    std::vector<Marine> marines;
+
+    Marine m(350, 300, 1.0);
+    std::vector<int> mSource = m.GetTextureSource(3);
+    std::vector<int> mDest = m.GetTextureDestination();
+    SDL_Rect mSRC = { mSource[0], mSource[1], mSource[2], mSource[3] };
+    SDL_Rect mDST = { mDest[0], mDest[1], mDest[2], mDest[3] };
+    
+    Marine m2(410, 180, 1.0);
+    mSource = m2.GetTextureSource(3);
+    mDest = m2.GetTextureDestination();
+    mSRC = { mSource[0], mSource[1], mSource[2], mSource[3] };
+    mDST = { mDest[0], mDest[1], mDest[2], mDest[3] };
+
+    marines = {m, m2};
+
+
+
 
 
 
@@ -204,7 +221,47 @@ void Renderer::Render() {
             SDL_RenderCopy(renderer, mzlAN, &mzlSRC, &mzlDST);
         }
         // MARINES
-        //...
+        for(auto & mrn : marines) {
+            mSource = mrn.GetTextureSource(3);
+            mDest = mrn.GetTextureDestination();
+            mSRC = { mSource[0], mSource[1], mSource[2], mSource[3] };
+            mDST = { mDest[0], mDest[1], mDest[2], mDest[3] };
+            SDL_RenderCopy(renderer, mrnText, &mSRC, &mDST);
+        }
+        // mSource = m.GetTextureSource(3);
+        // mDest = m.GetTextureDestination();
+        // mSRC = { mSource[0], mSource[1], mSource[2], mSource[3] };
+        // mDST = { mDest[0], mDest[1], mDest[2], mDest[3] };
+        // SDL_RenderCopy(renderer, mrnText, &mSRC, &mDST);
+        // mSource = m2.GetTextureSource(3);
+        // mDest = m2.GetTextureDestination();
+        // mSRC = { mSource[0], mSource[1], mSource[2], mSource[3] };
+        // mDST = { mDest[0], mDest[1], mDest[2], mDest[3] };
+        // SDL_RenderCopy(renderer, mrnText, &mSRC, &mDST);
+
+        // Check hitboxes;
+        if ((buttons & SDL_BUTTON_LMASK) != 0) {
+            for(auto & mrn : marines) {
+                hitbox = mrn.GetTextureDestination();
+                if (hitbox[0] < xcoord && hitbox[0] + hitbox[2] > xcoord && hitbox[1] < ycoord && hitbox[1] + hitbox[3] > ycoord) {
+                    std::cout << "HIT!\n";
+                } else {
+                    std::cout << ".\n";
+                }
+            }
+            // hitbox = m.GetTextureDestination();
+            // if (hitbox[0] < xcoord && hitbox[0] + hitbox[2] > xcoord && hitbox[1] < ycoord && hitbox[1] + hitbox[3] > ycoord) {
+            //     std::cout << "HIT!\n";
+            // } else {
+            //     std::cout << ".\n";
+            // }
+            // hitbox = m2.GetTextureDestination();
+            // if (hitbox[0] < xcoord && hitbox[0] + hitbox[2] > xcoord && hitbox[1] < ycoord && hitbox[1] + hitbox[3] > ycoord) {
+            //     std::cout << "HIT!\n";
+            // } else {
+            //     std::cout << ".\n";
+            // }
+        }
 
         // Update Screen
         SDL_RenderPresent(renderer);
@@ -272,97 +329,3 @@ int Renderer::GetQuadrant(float rads) {
 
     return(QUAD);
 }
-
-/*
-    // Clear screen
-    SDL_RenderClear(renderer);
-
-    // Render food
-    /*
-    SDL_SetRenderDrawColor(renderer, 0xFF, 0xCC, 0x00, 0xFF);
-    SDL_Rect block;
-    block.w = 20;
-    block.h = 20;
-    block.x = 5;
-    block.y = 5;
-    SDL_RenderFillRect(renderer, &block);
-    * /
-
-    //SDL_Surface * grassImage = SDL_LoadBMP("assets/grass4.bmp");
-    SDL_Surface * grassImage = SDL_LoadBMP("grass4.bmp");
-    SDL_Texture * grassTexture = SDL_CreateTextureFromSurface(renderer, grassImage);
-
-    SDL_Rect drect_grass1 = { 0, 0, 640, 420 };
-    SDL_Rect drect_grass2 = { 640, 0, 640, 420 };
-    SDL_Rect drect_grass3 = { 0, 420, 640, 420 };
-    SDL_Rect drect_grass4 = { 640, 420, 640, 420 };
-
-    // GRASS
-    SDL_RenderCopy(renderer, grassTexture, NULL, &drect_grass1);
-    SDL_RenderCopy(renderer, grassTexture, NULL, &drect_grass2);
-    SDL_RenderCopy(renderer, grassTexture, NULL, &drect_grass3);
-    SDL_RenderCopy(renderer, grassTexture, NULL, &drect_grass4);
-    std::cout << "DOES NOT SHOW RENDER!! THEN FORGET IT!\n";
-
-    // Update Screen
-    SDL_RenderPresent(renderer);
-}
-*/
-
-
-/*
-void Renderer::Render(Snake const snake, SDL_Point const &food1,
-SDL_Point const &food2, SDL_Point const &food3) {
-  SDL_Rect block;
-  block.w = screen_width / grid_width;
-  block.h = screen_height / grid_height;
-
-  // Clear screen
-  SDL_SetRenderDrawColor(renderer, 0x05, 0x05, 0x05, 0xFF);
-  SDL_RenderClear(renderer);
-
-  // Render grassy background
-  SDL_Surface * image = SDL_LoadBMP("assets/grass.bmp");
-  SDL_Texture * texture = SDL_CreateTextureFromSurface(renderer, image);
-  SDL_Rect dstrect = { 5, 5, 64, 64 };
-  SDL_RenderCopy(renderer, texture, NULL, &dstrect);
-  //SDL_RenderCopy(renderer, texture, NULL, NULL);
-  //SDL_RenderPresent(renderer);
-
-  // Render food
-  SDL_SetRenderDrawColor(renderer, 0xFF, 0xCC, 0x00, 0xFF);
-  block.x = food1.x * block.w;
-  block.y = food1.y * block.h;
-  SDL_RenderFillRect(renderer, &block);
-  SDL_SetRenderDrawColor(renderer, 0xFF, 0xCC, 0x00, 0xFF);
-  block.x = food2.x * block.w;
-  block.y = food2.y * block.h;
-  SDL_RenderFillRect(renderer, &block);
-  SDL_SetRenderDrawColor(renderer, 0xFF, 0xCC, 0x00, 0xFF);
-  block.x = food3.x * block.w;
-  block.y = food3.y * block.h;
-  SDL_RenderFillRect(renderer, &block);
-
-  // Render snake's body
-  SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-  for (SDL_Point const &point : snake.body) {
-    block.x = point.x * block.w;
-    block.y = point.y * block.h;
-    SDL_RenderFillRect(renderer, &block);
-  }
-
-  // Render snake's head
-  block.x = static_cast<int>(snake.head_x) * block.w;
-  block.y = static_cast<int>(snake.head_y) * block.h;
-  if (snake.alive) {
-    SDL_SetRenderDrawColor(renderer, 0x00, 0x7A, 0xCC, 0xFF);
-  } else {
-    SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0xFF);
-  }
-  SDL_RenderFillRect(renderer, &block);
-
-  // Update Screen
-  SDL_RenderPresent(renderer);
-}
-*/
-

@@ -13,6 +13,7 @@ class Renderer {
   void Render();
   void UpdateWindowTitle(int score, int health, int seconds);
   int GetQuadrant(float rads);
+  //int CheckHitbox()
 
   // Must be public
   SDL_Window *window;

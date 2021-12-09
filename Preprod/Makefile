@@ -1,5 +1,5 @@
 #OBJS specifies which files to compile as part of the project
-OBJS = main.cpp renderer.cpp turret.cpp
+OBJS = main.cpp renderer.cpp turret.cpp marine.cpp
 
 #CC specifies which compiler we're using
 CC = g++
