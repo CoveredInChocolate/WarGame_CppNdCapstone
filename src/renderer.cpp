@@ -1,48 +1,78 @@
 #include "renderer.h"
 #include <iostream>
 #include <string>
+#include <SDL2/SDL.h>  
 
 Renderer::Renderer(const std::size_t screen_width,
-                   const std::size_t screen_height,
-                   const std::size_t grid_width, const std::size_t grid_height)
+                   const std::size_t screen_height)
     : screen_width(screen_width),
-      screen_height(screen_height),
-      grid_width(grid_width),
-      grid_height(grid_height) {
-  // Initialize SDL
-  if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-    std::cerr << "SDL could not initialize.\n";
-    std::cerr << "SDL_Error: " << SDL_GetError() << "\n";
-  }
-  // SDL initialize JPGs
-  //IMG_Init(IMG_INIT_JPG);
+      screen_height(screen_height) {
+    // Initialize SDL
+    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+        std::cerr << "SDL could not initialize.\n";
+        std::cerr << "SDL_Error: " << SDL_GetError() << "\n";
+    }
 
-  // Create Window
-  sdl_window = SDL_CreateWindow("Snake Game", SDL_WINDOWPOS_CENTERED,
-                                SDL_WINDOWPOS_CENTERED, screen_width,
-                                screen_height, SDL_WINDOW_SHOWN);
+    // Create Window
+    sdl_window = SDL_CreateWindow("!! WarGame !!", SDL_WINDOWPOS_CENTERED,
+                                  SDL_WINDOWPOS_CENTERED, screen_width,
+                                  screen_height, SDL_WINDOW_SHOWN);
 
-  if (nullptr == sdl_window) {
-    std::cerr << "Window could not be created.\n";
-    std::cerr << " SDL_Error: " << SDL_GetError() << "\n";
-  }
+    if (nullptr == sdl_window) {
+        std::cerr << "Window could not be created.\n";
+        std::cerr << " SDL_Error: " << SDL_GetError() << "\n";
+    }
 
-  // Create renderer
-  sdl_renderer = SDL_CreateRenderer(sdl_window, -1, SDL_RENDERER_ACCELERATED);
-  if (nullptr == sdl_renderer) {
-    std::cerr << "Renderer could not be created.\n";
-    std::cerr << "SDL_Error: " << SDL_GetError() << "\n";
-  }
+    // Create renderer
+    sdl_renderer = SDL_CreateRenderer(sdl_window, -1, SDL_RENDERER_ACCELERATED);
+    if (nullptr == sdl_renderer) {
+        std::cerr << "Renderer could not be created.\n";
+        std::cerr << "SDL_Error: " << SDL_GetError() << "\n";
+    }
 }
 
 Renderer::~Renderer() {
-  //SDL_DestroyTexture(texture);
-  //SDL_FreeSurface(image);
-  SDL_DestroyRenderer(sdl_renderer);
-  SDL_DestroyWindow(sdl_window);
-  SDL_Quit();
+    SDL_DestroyRenderer(sdl_renderer);
+    SDL_DestroyWindow(sdl_window);
+    SDL_Quit();
 }
 
+void Renderer::Render() {
+    // Clear screen
+    SDL_RenderClear(sdl_renderer);
+
+    // Render food
+    /*
+    SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0xCC, 0x00, 0xFF);
+    SDL_Rect block;
+    block.w = 20;
+    block.h = 20;
+    block.x = 5;
+    block.y = 5;
+    SDL_RenderFillRect(sdl_renderer, &block);
+    */
+
+    //SDL_Surface * grassImage = SDL_LoadBMP("assets/grass4.bmp");
+    SDL_Surface * grassImage = SDL_LoadBMP("grass4.bmp");
+    SDL_Texture * grassTexture = SDL_CreateTextureFromSurface(sdl_renderer, grassImage);
+
+    SDL_Rect drect_grass1 = { 0, 0, 640, 420 };
+    SDL_Rect drect_grass2 = { 640, 0, 640, 420 };
+    SDL_Rect drect_grass3 = { 0, 420, 640, 420 };
+    SDL_Rect drect_grass4 = { 640, 420, 640, 420 };
+
+    // GRASS
+    SDL_RenderCopy(sdl_renderer, grassTexture, NULL, &drect_grass1);
+    SDL_RenderCopy(sdl_renderer, grassTexture, NULL, &drect_grass2);
+    SDL_RenderCopy(sdl_renderer, grassTexture, NULL, &drect_grass3);
+    SDL_RenderCopy(sdl_renderer, grassTexture, NULL, &drect_grass4);
+    std::cout << "DOES NOT SHOW RENDER!! THEN FORGET IT!\n";
+
+    // Update Screen
+    SDL_RenderPresent(sdl_renderer);
+}
+
+/*
 void Renderer::Render(Snake const snake, SDL_Point const &food1,
 SDL_Point const &food2, SDL_Point const &food3) {
   SDL_Rect block;
@@ -96,8 +126,9 @@ SDL_Point const &food2, SDL_Point const &food3) {
   // Update Screen
   SDL_RenderPresent(sdl_renderer);
 }
+*/
 
-void Renderer::UpdateWindowTitle(int score, int fps) {
-  std::string title{"Snake Score: " + std::to_string(score) + " FPS: " + std::to_string(fps)};
+void Renderer::UpdateWindowTitle(int score, int health) {
+  std::string title{"!! WarGame !! -- Marines killed: " + std::to_string(score) + " Turret Health: " + std::to_string(health)};
   SDL_SetWindowTitle(sdl_window, title.c_str());
 }
