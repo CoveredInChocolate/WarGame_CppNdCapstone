@@ -10,7 +10,13 @@ public:
 
     std::vector<int> GetTextureSource(int QUAD); 
     std::vector<int> GetTextureDestination(); 
-    std::vector<int> GetPosition(); 
+    std::vector<int> GetPosition();
+    std::vector<int> GetDeathSource(Uint32 ticks);
+    std::vector<int> GetDeathDestination(Uint32 ticks);
+    bool isAlive();
+    bool isDead();
+    void setAliveFalse();
+    void setDeadTrue();
 
  private:
     float speed;
@@ -18,6 +24,7 @@ public:
     float mrnFac{1.72};
     float mrnFacAtt{1.9};
     bool alive{true};
+    bool dead{false};
     int posX;
     int posY;
   // Starting point x, y

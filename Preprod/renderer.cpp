@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <algorithm>
 #include <SDL2/SDL.h>  
 
 Renderer::Renderer(int framesPerSecond,
@@ -61,10 +62,14 @@ void Renderer::Render() {
     Uint32 buttons;
     int xcoord, ycoord;
     int xcorr, ycorr;
+    int marineKills = 0;
     int QUADRANT;
 
     // Hitbox variale
     std::vector<int> hitbox;
+
+    // Display some debugging info
+    bool DEBUG = true;
 
 
     // -------------------------- Load assets and sprites
@@ -142,8 +147,11 @@ void Renderer::Render() {
     SDL_Texture * mrnText = SDL_CreateTextureFromSurface(renderer, mimg);
     SDL_FreeSurface(mimg);
 
-    // Initializing Marine vector
+    // Initializing Marine vectors and helper vectors
     std::vector<Marine> marines;
+    std::vector<Marine> splat;
+    std::vector<int> removeMarines;
+    std::vector<int> removeDead;
 
     Marine m(350, 300, 1.0);
     std::vector<int> mSource = m.GetTextureSource(3);
@@ -200,7 +208,7 @@ void Renderer::Render() {
         SDL_RenderCopy(renderer, grassTexture, NULL, &gr2rect);
         SDL_RenderCopy(renderer, grassTexture, NULL, &gr3rect);
         SDL_RenderCopy(renderer, grassTexture, NULL, &gr4rect);
-        
+
         // TREES
         SDL_RenderCopy(renderer, tree1text, NULL, &t1rect);
         SDL_RenderCopy(renderer, tree2text, NULL, &t2rect);
@@ -224,12 +232,31 @@ void Renderer::Render() {
             SDL_RenderCopy(renderer, mzlAN, &mzlSRC, &mzlDST);
         }
         // MARINES
+        // for(int i; i < marines.size(); i++) {
+        //     //Marine &mrn = marines[i];
+        //     mSource = marines[i].GetTextureSource(3);
+        //     mDest = marines[i].GetTextureDestination();
+        //     mSRC = { mSource[0], mSource[1], mSource[2], mSource[3] };
+        //     mDST = { mDest[0], mDest[1], mDest[2], mDest[3] };
+        //     SDL_RenderCopy(renderer, mrnText, &mSRC, &mDST);
+        // }
         for(auto & mrn : marines) {
-            mSource = mrn.GetTextureSource(3);
-            mDest = mrn.GetTextureDestination();
-            mSRC = { mSource[0], mSource[1], mSource[2], mSource[3] };
-            mDST = { mDest[0], mDest[1], mDest[2], mDest[3] };
-            SDL_RenderCopy(renderer, mrnText, &mSRC, &mDST);
+            if(mrn.isAlive()) { // Temporary - will remove objects from 'marines'
+                mSource = mrn.GetTextureSource(3);
+                mDest = mrn.GetTextureDestination();
+                mSRC = { mSource[0], mSource[1], mSource[2], mSource[3] };
+                mDST = { mDest[0], mDest[1], mDest[2], mDest[3] };
+                SDL_RenderCopy(renderer, mrnText, &mSRC, &mDST);
+            }
+        }
+        for(auto & mrn : splat) {
+            if(!mrn.isAlive() && !mrn.isDead()) { // Temporary - will create separate vector for Death Animations
+                mSource = mrn.GetDeathSource(frame_start);
+                mDest = mrn.GetDeathDestination(frame_start);
+                mSRC = { mSource[0], mSource[1], mSource[2], mSource[3] };
+                mDST = { mDest[0], mDest[1], mDest[2], mDest[3] };
+                SDL_RenderCopy(renderer, mrnText, &mSRC, &mDST);
+            }
         }
         // mSource = m.GetTextureSource(3);
         // mDest = m.GetTextureDestination();
@@ -245,26 +272,57 @@ void Renderer::Render() {
         // Check hitboxes;
         if ((buttons & SDL_BUTTON_LMASK) != 0) {
             for(auto & mrn : marines) {
-                hitbox = mrn.GetTextureDestination();
-                if (hitbox[0] < xcoord && hitbox[0] + hitbox[2] > xcoord && hitbox[1] < ycoord && hitbox[1] + hitbox[3] > ycoord) {
-                    std::cout << "HIT!\n";
+                if(mrn.isAlive()) {
+                    hitbox = mrn.GetTextureDestination();
+                    if (hitbox[0] < xcoord && hitbox[0] + hitbox[2] > xcoord && hitbox[1] < ycoord && hitbox[1] + hitbox[3] > ycoord) {
+                        std::cout << "HIT!\n";
+                        mrn.setAliveFalse();
+                        marineKills = marineKills + 1;
+                        splat.push_back(mrn); // Marine to death animation
+                        //marines.erase(mrn);   // Marines out of marines
+                    } else {
+                        std::cout << ".\n";
+                    }
                 } else {
-                    std::cout << ".\n";
+                        std::cout << ".\n";
                 }
             }
-            // hitbox = m.GetTextureDestination();
-            // if (hitbox[0] < xcoord && hitbox[0] + hitbox[2] > xcoord && hitbox[1] < ycoord && hitbox[1] + hitbox[3] > ycoord) {
-            //     std::cout << "HIT!\n";
-            // } else {
-            //     std::cout << ".\n";
-            // }
-            // hitbox = m2.GetTextureDestination();
-            // if (hitbox[0] < xcoord && hitbox[0] + hitbox[2] > xcoord && hitbox[1] < ycoord && hitbox[1] + hitbox[3] > ycoord) {
-            //     std::cout << "HIT!\n";
-            // } else {
-            //     std::cout << ".\n";
-            // }
         }
+
+        // Cleaning up marines vector
+        // Finding indices to remove
+        for(int i = 0; i < marines.size(); i++) {
+            //std::cout << "Mrn stat: " << marines[i].isAlive() << "\n";
+            if (marines[i].isAlive() == 0) {
+                removeMarines.push_back(i);
+            }
+        }
+        // Reverse vector so largest elements are last
+        reverse(removeMarines.begin(), removeMarines.end());
+        // Removing marines
+        for(int j = 0; j < removeMarines.size(); j++) {
+            marines.erase (marines.begin()+removeMarines[j]);
+        }
+        // Clearing vector
+        removeMarines.clear();
+        
+
+        // Finding indices to remove
+        for(int i = 0; i < splat.size(); i++) {
+            //std::cout << "Mrn stat: " << marines[i].isAlive() << "\n";
+            if (splat[i].isDead() == 1) {
+                removeDead.push_back(i);
+            }
+        }
+        // Reverse vector so largest elements are last
+        reverse(removeDead.begin(), removeDead.end());
+        // Removing dead
+        for(int j = 0; j < removeDead.size(); j++) {
+            splat.erase (splat.begin()+removeDead[j]);
+        }
+        // Clearing vector
+        removeDead.clear();
+
 
         // Update Screen
         SDL_RenderPresent(renderer);
@@ -275,12 +333,24 @@ void Renderer::Render() {
         // takes.
         frame_duration = frame_end - frame_start;
 
+        if (DEBUG) { // Print out some info every 0.5 seconds
+            if (frame_end - title_timestamp >= 1000) {
+                std::cout << "***********************************\n";
+                std::cout << "     Some debugging information!   \n";
+                std::cout << "***********************************\n";
+                std::cout << "Number of marines  : " << marines.size() << "\n";
+                std::cout << "Number of splat    : " << splat.size() << "\n";
+                std::cout << "Frame start (sprz) : " << frame_start << "\n";
+            }
+        }
+
         // After every second, update the window title.
         if (frame_end - title_timestamp >= 1000) {
             durationSeconds = durationSeconds + 1;
-            UpdateWindowTitle(0, turret.GetHitPoints(), durationSeconds);
+            UpdateWindowTitle(marineKills, turret.GetHitPoints(), durationSeconds);
             title_timestamp = frame_end;
         }
+
 
         // If the time for this frame is too small (i.e. frame_duration is
         // smaller than the target ms_per_frame), delay the loop to
