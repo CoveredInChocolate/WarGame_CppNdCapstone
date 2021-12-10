@@ -117,6 +117,13 @@ void Renderer::Render() {
     SDL_Rect srcrectGover = { 5, 5, 390, 320 };
     SDL_Rect dstrectGover = { 540, 230, explosionSize*321, explosionSize*385 };
 
+    // Game Over Text
+    SDL_Surface * gmImg = SDL_LoadBMP("assets/GameOverMessage.bmp");
+    SDL_Texture * gmText = SDL_CreateTextureFromSurface(renderer, gmImg);
+    SDL_FreeSurface(gmImg);
+    SDL_Rect gmDest = { 240, 100, 800, 300 };
+
+
     // Muzzle Flash
     SDL_Surface * mzImgWW = SDL_LoadBMP("assets/muzzle_WW.bmp");
     SDL_Surface * mzImgNW = SDL_LoadBMP("assets/muzzle_NW.bmp");
@@ -210,7 +217,6 @@ void Renderer::Render() {
     // ----------------------------------------------------- MAIN GAME LOOP
     while (!quit) {
         while (SDL_PollEvent(&event) != NULL) {
-
             switch (event.type) {
                 case SDL_QUIT:
                     quit = true;
@@ -320,15 +326,6 @@ void Renderer::Render() {
                 }
             }
             turret.SetHitPoints(attackingMarines);
-            if (turret.GetHitPoints() <= 0) {
-                // Sleep for 10 seconds and quit
-                UpdateWindowTitle(marineKills, marines.size(), 0, durationSeconds);
-                SDL_RenderCopy(renderer, goverText, &srcrectGover, &dstrectGover);
-                SDL_RenderPresent(renderer);
-                sleep(10);
-                PrintGameOver(marineKills, durationSeconds);
-                quit = true;
-            }
             attackInterval = frame_start;
         }
 
@@ -369,6 +366,31 @@ void Renderer::Render() {
 
         // Update Screen
         SDL_RenderPresent(renderer);
+
+
+        // Uh-oh! GAME OVER!  :-C  (8=  :-C  (8= :-C  (8=  :-C  (8= :-C  (8=  :-C  (8=
+        if (turret.GetHitPoints() <= 0) {
+            // ********************************************* GAME OVER!! *********************************************************************
+            // Sleep for 30 seconds and quit automatically
+            UpdateWindowTitle(marineKills, marines.size(), 0, durationSeconds);
+            SDL_RenderCopy(renderer, goverText, &srcrectGover, &dstrectGover);
+            SDL_RenderCopy(renderer, gmText, NULL, &gmDest);
+            SDL_RenderPresent(renderer);
+            int quitDelay = 0;
+            while (!quit && quitDelay < 10000) {
+                while (SDL_PollEvent(&event) != NULL) {
+                    switch (event.type) {
+                        case SDL_QUIT:
+                            quit = true;
+                            break;
+                    }
+                }
+                usleep(1000);
+                quitDelay = quitDelay + 1;
+            }
+            PrintGameOver(marineKills, durationSeconds);
+            quit = true;
+        }
 
         frame_end = SDL_GetTicks();
 
@@ -413,7 +435,7 @@ void Renderer::PrintGameOver(int score, int seconds) {
     std::cout << "--| GAME OVER |--\n";
     std::cout << "Thanks for playing !! WarGame !!\n\n";
     std::cout << "You killed : " << score << " enemies!\n";
-    std::cout << "You lasted : " << seconds << " secpnds.\n\n";
+    std::cout << "You lasted : " << seconds << " seconds.\n\n";
 }
 
 int Renderer::GetQuadrant(float rads) {
