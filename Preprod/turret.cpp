@@ -12,6 +12,11 @@ int Turret::GetHitPoints() {
     return hitPoints;
 }
 
+void Turret::SetHitPoints(int attackingMarines) {
+    // Each marine deals 8 damage per second!
+    hitPoints = hitPoints - 2*attackingMarines;
+}
+
 int Turret::GetGunSize() {
     return gunSize;
 }

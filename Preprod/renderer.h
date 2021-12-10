@@ -12,9 +12,9 @@ class Renderer {
 
   //void Render(Snake const snake, SDL_Point const &food1, SDL_Point const &food2, SDL_Point const &food3);
   void Render();
-  void UpdateWindowTitle(int score, int health, int seconds);
+  void UpdateWindowTitle(int score, int numMarines, int health, int seconds);
+  void PrintGameOver(int score, int seconds);
   int GetQuadrant(float rads);
-  //int CheckHitbox()
   std::vector<int> RandomPoint();
   int GetPolarX(float radians, float dist);
   int GetPolarY(float radians, float dist);

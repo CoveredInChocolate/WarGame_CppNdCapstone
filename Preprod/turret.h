@@ -9,6 +9,7 @@ class Turret {
   Turret(int hitPoints, int gunSize, float muzzleSizeFactor);
 
   int GetHitPoints();
+  void SetHitPoints(int attackingMarines);
   int GetGunSize();
   std::vector<int> GetTextureSource(int QUAD); 
   std::vector<int> GetTextureDestination(int QUAD); 

@@ -6,6 +6,7 @@
 #include <string>
 #include <algorithm>
 #include <random>
+#include <unistd.h>
 #include <SDL2/SDL.h>  
 
 Renderer::Renderer(int framesPerSecond,
@@ -59,6 +60,7 @@ void Renderer::Render() {
     Uint32 frame_start;
     Uint32 frame_end;
     Uint32 frame_duration;
+    Uint32 attackInterval;
     int durationSeconds = 0;
 
     Uint32 buttons;
@@ -66,6 +68,7 @@ void Renderer::Render() {
     int xcorr, ycorr;
     int marineKills = 0;
     int QUADRANT;
+    int attackingMarines = 0;
 
     // Hitbox variale
     std::vector<int> hitbox;
@@ -101,11 +104,18 @@ void Renderer::Render() {
     SDL_Rect t3rect = { 915, 523, 240, 240 };
 
     // Turret
-    Turret turret(1000, 90, 0.7);
+    Turret turret(100, 90, 0.7);
     int gunSize = turret.GetGunSize();
     SDL_Surface * gg = SDL_LoadBMP("assets/gluegun_anim.bmp");
     SDL_Texture * ggText = SDL_CreateTextureFromSurface(renderer, gg);
     SDL_FreeSurface(gg);
+
+    // Explosion
+    float explosionSize = 0.6;
+    SDL_Surface * govr = SDL_LoadBMP("assets/GameOver.bmp");
+    SDL_Texture * goverText = SDL_CreateTextureFromSurface(renderer, govr);
+    SDL_Rect srcrectGover = { 5, 5, 390, 320 };
+    SDL_Rect dstrectGover = { 540, 230, explosionSize*321, explosionSize*385 };
 
     // Muzzle Flash
     SDL_Surface * mzImgWW = SDL_LoadBMP("assets/muzzle_WW.bmp");
@@ -162,10 +172,24 @@ void Renderer::Render() {
     // std::cout << "yPos: " << pos[1] << "\n";
     // std::cout << "QUAD: " << pos[2] << "\n";
     // std::cout << "dist: " << ddd << "\n";
+
+    // How many milliseconds between spawns (on average)
+    int spawnRate = 800;
+    // How quicly the rate increases (i.e. time reduces)
+    float spawnRateDecrease = 0.9;
+    // Initialize random number generator and draw first spawn time
+    std::random_device rd; // obtain a random number from hardware
+    std::mt19937 gen(rd()); // seed the generator
+    std::uniform_int_distribution<> distr(100, spawnRate); // define the range
+
+    // First marine spawn
+    int nextSpawnTime = distr(gen);
+
+    // Spawm two marines straight away
     std::vector<int> pos;
     // Starting Position
     pos = RandomPoint();
-    Marine m(pos[0], pos[1], pos[2], 1.0);
+    Marine m(pos[0], pos[1], pos[2]);
     std::vector<int> mSource = m.GetTextureSource(frame_start);
     std::vector<int> mDest = m.GetTextureDestination();
     SDL_Rect mSRC = { mSource[0], mSource[1], mSource[2], mSource[3] };
@@ -173,7 +197,7 @@ void Renderer::Render() {
     
     // Starting Position
     pos = RandomPoint();
-    Marine m2(pos[0], pos[1], pos[2], 1.0);
+    Marine m2(pos[0], pos[1], pos[2]);
     mSource = m2.GetTextureSource(frame_start);
     mDest = m2.GetTextureDestination();
     mSRC = { mSource[0], mSource[1], mSource[2], mSource[3] };
@@ -244,46 +268,31 @@ void Renderer::Render() {
             SDL_RenderCopy(renderer, mzlAN, &mzlSRC, &mzlDST);
         }
         // MARINES
-        // for(int i; i < marines.size(); i++) {
-        //     //Marine &mrn = marines[i];
-        //     mSource = marines[i].GetTextureSource(3);
-        //     mDest = marines[i].GetTextureDestination();
-        //     mSRC = { mSource[0], mSource[1], mSource[2], mSource[3] };
-        //     mDST = { mDest[0], mDest[1], mDest[2], mDest[3] };
-        //     SDL_RenderCopy(renderer, mrnText, &mSRC, &mDST);
-        // }
-        // // Update positions
-        // m.UpdatePosition(frame_start);
-        // m2.UpdatePosition(frame_start);
         for(auto & mrn : marines) {
-            //if(mrn.isAlive()) { // Temporary - will remove objects from 'marines'
             mrn.UpdatePosition(frame_start);
             mSource = mrn.GetTextureSource(frame_start);
             mDest = mrn.GetTextureDestination();
             mSRC = { mSource[0], mSource[1], mSource[2], mSource[3] };
             mDST = { mDest[0], mDest[1], mDest[2], mDest[3] };
             SDL_RenderCopy(renderer, mrnText, &mSRC, &mDST);
-            //}
         }
         for(auto & mrn : splat) {
-            //if(!mrn.isAlive() && !mrn.isDead()) { // Temporary - will create separate vector for Death Animations
             mSource = mrn.GetDeathSource(frame_start);
             mDest = mrn.GetDeathDestination(frame_start);
             mSRC = { mSource[0], mSource[1], mSource[2], mSource[3] };
             mDST = { mDest[0], mDest[1], mDest[2], mDest[3] };
             SDL_RenderCopy(renderer, mrnText, &mSRC, &mDST);
-            //}
         }
-        // mSource = m.GetTextureSource(3);
-        // mDest = m.GetTextureDestination();
-        // mSRC = { mSource[0], mSource[1], mSource[2], mSource[3] };
-        // mDST = { mDest[0], mDest[1], mDest[2], mDest[3] };
-        // SDL_RenderCopy(renderer, mrnText, &mSRC, &mDST);
-        // mSource = m2.GetTextureSource(3);
-        // mDest = m2.GetTextureDestination();
-        // mSRC = { mSource[0], mSource[1], mSource[2], mSource[3] };
-        // mDST = { mDest[0], mDest[1], mDest[2], mDest[3] };
-        // SDL_RenderCopy(renderer, mrnText, &mSRC, &mDST);
+        // Spawn new marine
+        if (frame_start > nextSpawnTime) {
+            pos = RandomPoint();
+            Marine m(pos[0], pos[1], pos[2]);
+            m.setSpawnTime(frame_start);
+            marines.push_back(m);
+
+            // Define next spawn time
+            nextSpawnTime = frame_start + distr(gen);
+        }
 
         // Check hitboxes;
         if ((buttons & SDL_BUTTON_LMASK) != 0) {
@@ -296,14 +305,30 @@ void Renderer::Render() {
                         mrn.setTimeOfDeath(frame_start);
                         marineKills = marineKills + 1;
                         splat.push_back(mrn); // Marine to death animation
-                        //marines.erase(mrn);   // Marines out of marines
-                    // } else {
-                    //     std::cout << ".\n";
                     }
-                // } else {
-                //         std::cout << ".\n";
                 }
             }
+        }
+
+        // Count attacking marines and deducting hitpoints
+        if(frame_start - attackInterval > 250) {
+            attackingMarines = 0;
+            for(int k = 0; k < marines.size(); k++) {
+                if (marines[k].isAttacking() == 1) {
+                    attackingMarines = attackingMarines + 1;
+                }
+            }
+            turret.SetHitPoints(attackingMarines);
+            if (turret.GetHitPoints() <= 0) {
+                // Sleep for 10 seconds and quit
+                UpdateWindowTitle(marineKills, marines.size(), 0, durationSeconds);
+                SDL_RenderCopy(renderer, goverText, &srcrectGover, &dstrectGover);
+                SDL_RenderPresent(renderer);
+                sleep(10);
+                PrintGameOver(marineKills, durationSeconds);
+                quit = true;
+            }
+            attackInterval = frame_start;
         }
 
         // Cleaning up marines vector
@@ -364,7 +389,7 @@ void Renderer::Render() {
         // After every second, update the window title.
         if (frame_end - title_timestamp >= 1000) {
             durationSeconds = durationSeconds + 1;
-            UpdateWindowTitle(marineKills, turret.GetHitPoints(), durationSeconds);
+            UpdateWindowTitle(marineKills, marines.size(), turret.GetHitPoints(), durationSeconds);
             title_timestamp = frame_end;
         }
 
@@ -378,9 +403,16 @@ void Renderer::Render() {
     }
 }
 
-void Renderer::UpdateWindowTitle(int score, int health, int seconds) {
-  std::string title{"!! WarGame !! -- Marines killed: " + std::to_string(score) + ", Turret Health: " + std::to_string(health) + ", Run Time: " + std::to_string(seconds)};
+void Renderer::UpdateWindowTitle(int score, int numMarines, int health, int seconds) {
+  std::string title{"!! WarGame !! -- Marines killed: " + std::to_string(score) + ", Number of marines: " + std::to_string(numMarines) + ", Turret Health: " + std::to_string(health) + ", Run Time: " + std::to_string(seconds)};
   SDL_SetWindowTitle(window, title.c_str());
+}
+
+void Renderer::PrintGameOver(int score, int seconds) {
+    std::cout << "--| GAME OVER |--\n";
+    std::cout << "Thanks for playing !! WarGame !!\n\n";
+    std::cout << "You killed : " << score << " enemies!\n";
+    std::cout << "You lasted : " << seconds << " secpnds.\n\n";
 }
 
 int Renderer::GetQuadrant(float rads) {
@@ -469,7 +501,3 @@ float Renderer::GetDist(int x, int y) {
     float dist = sqrt(x*x + y*y);
     return dist;
 }
-
-        // // Calculating corrected points: (0,0) in the center
-        // xcorr = xcoord - screen_width/2;
-        // ycorr = ycoord - screen_height/2;

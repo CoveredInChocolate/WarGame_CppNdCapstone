@@ -4,7 +4,7 @@
 #include <string>
 #include <SDL2/SDL.h> 
 
-Marine::Marine(int posX, int posY, int quad, float speed) : posX(posX), posY(posY), quad(quad), speed(speed) {
+Marine::Marine(int posX, int posY, int quad) : posX(posX), posY(posY), quad(quad) {
     startX = posX;
     startY = posY;
     SetColumn(quad);
@@ -22,9 +22,9 @@ void Marine::UpdatePosition(int tm) {
     // Moving towards center: 640, 420
     // Attacking after 8 seconds and distance of 200
     if(!attacking) {
-        tm = std::min(tm, 8000);
-        float timeSinceSpawn = tm - spawnTime;
-        float totalTravel = 8000 - spawnTime;
+        int timeSinceSpawn = tm - spawnTime;
+        timeSinceSpawn = std::min(timeSinceSpawn, 8000);
+        float totalTravel = 8000;
         float propTraveled = timeSinceSpawn/totalTravel;
         //std::cout << "Prop: " << propTraveled << "\n";
         posX = round(640*propTraveled + startX*(1-propTraveled));
@@ -82,6 +82,10 @@ bool Marine::isDead() {
     return dead;
 }
 
+bool Marine::isAttacking() {
+    return attacking;
+}
+
 void Marine::setAliveFalse() {
     // Marine is hit, to play death animation
     alive = false;
@@ -98,34 +102,6 @@ float Marine::GetDist(int x, int y) {
     float dist = sqrt(x*x + y*y);
     return dist;
 }
-
-// void Marine::SetColumn(int quad) {
-//     if (quad == 1) {
-//         // WW
-//         mrnCOL = 78;
-//     } else if (quad == 2) {
-//         // NW
-//         mrnCOL = 117;
-//     } else if (quad == 3) {
-//         // NN
-//         mrnCOL = 156;
-//     } else if (quad == 4) {
-//         // NE
-//         mrnCOL = 195;
-//     } else if (quad == 5) {
-//         // EE
-//         mrnCOL = 234;
-//     } else if (quad == 6) {
-//         // SE
-//         mrnCOL = 273;
-//     } else if (quad == 7) {
-//         // SS
-//         mrnCOL = 0;
-//     } else if (quad == 8) {
-//         // SW
-//         mrnCOL = 39;
-//     }
-// }
 
 void Marine::SetColumn(int quad) {
     if (quad == 1) {
@@ -162,29 +138,3 @@ void Marine::SetColumn(int quad) {
         attackAdjust = 0;
     }
 }
-
-        // // Marine - Attack animation NW
-        // srcrectMRNAtt_SW = { mrnCOL_SW-8, 127 + mrnAttackSprite*64, 40, 37 };
-        // dstrectMRNAtt_SW = { 100, 580, mrnFacAtt*40, mrnFacAtt*37 };
-        // // Marine - Attack animation SE
-        // srcrectMRNAtt_SE = { mrnCOL_SE, 127 + mrnAttackSprite*64, 40, 37 };
-        // dstrectMRNAtt_SE = { 200, 580, mrnFacAtt*40, mrnFacAtt*37 };
-        // // Marine - Attack animation SS
-        // srcrectMRNAtt_SS = { mrnCOL_SS-8, 127 + mrnAttackSprite*64, 35, 37 };
-        // dstrectMRNAtt_SS = { 300, 580, mrnFacAtt*40, mrnFacAtt*37 };
-        // // Marine - Attack animation NW
-        // srcrectMRNAtt_NW = { mrnCOL_NW-5, 127 + mrnAttackSprite*64, 40, 37 };
-        // dstrectMRNAtt_NW = { 400, 580, mrnFacAtt*40, mrnFacAtt*37 };
-        // // --------------------------------------------
-        // // Marine - Attack animation WW
-        // srcrectMRNAtt_WW = { mrnCOL_WW-10, 127 + mrnAttackSprite*64, 40, 37 };
-        // dstrectMRNAtt_WW = { 100, 680, mrnFacAtt*40, mrnFacAtt*37 };
-        // // Marine - Attack animation NE
-        // srcrectMRNAtt_NE = { mrnCOL_NE, 127 + mrnAttackSprite*64, 40, 37 };
-        // dstrectMRNAtt_NE = { 200, 680, mrnFacAtt*40, mrnFacAtt*37 };
-        // // Marine - Attack animation EE
-        // srcrectMRNAtt_EE = { mrnCOL_EE, 127 + mrnAttackSprite*64, 35, 37 };
-        // dstrectMRNAtt_EE = { 300, 680, mrnFacAtt*40, mrnFacAtt*37 };
-        // // Marine - Attack animation NN
-        // srcrectMRNAtt_NN = { mrnCOL_NN, 127 + mrnAttackSprite*64, 40, 37 };
-        // dstrectMRNAtt_NN = { 400, 680, mrnFacAtt*40, mrnFacAtt*37 };

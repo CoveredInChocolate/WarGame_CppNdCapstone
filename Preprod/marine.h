@@ -6,7 +6,7 @@
 
 class Marine {
 public:
-    Marine(int posX, int posY, int quad, float speed);
+    Marine(int posX, int posY, int quad);
 
     std::vector<int> GetTextureSource(Uint32 ticks); 
     std::vector<int> GetTextureDestination(); 
@@ -15,6 +15,7 @@ public:
     std::vector<int> GetDeathDestination(Uint32 ticks);
     bool isAlive();
     bool isDead();
+    bool isAttacking();
     void setAliveFalse();
     void setDeadTrue();
     void setTimeOfDeath(int tm);
@@ -25,10 +26,9 @@ public:
     int startX;
     int startY;
     int mrnCOL;
-    int attackAdjust;
+    int attackAdjust; 
 
  private:
-    float speed;
     int mrnSize{60};
     float mrnFac{1.72};
     float mrnFacAtt{1.9};
@@ -41,8 +41,6 @@ public:
     int posX;
     int posY;
     int quad; // Which quadrant they come FROM, which determines direction
-  // Starting point x, y
-  // bool attacking;
 };
 
 #endif
