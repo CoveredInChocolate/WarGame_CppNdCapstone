@@ -104,7 +104,7 @@ void Renderer::Render() {
     SDL_Rect t3rect = { 915, 523, 240, 240 };
 
     // Turret
-    Turret turret(100, 90, 0.7);
+    Turret turret(1000, 90, 0.7);
     int gunSize = turret.GetGunSize();
     SDL_Surface * gg = SDL_LoadBMP("assets/gluegun_anim.bmp");
     SDL_Texture * ggText = SDL_CreateTextureFromSurface(renderer, gg);
@@ -267,6 +267,7 @@ void Renderer::Render() {
             mzlAN = mzlANV[QUADRANT-1];
             SDL_RenderCopy(renderer, mzlAN, &mzlSRC, &mzlDST);
         }
+
         // MARINES
         for(auto & mrn : marines) {
             mrn.UpdatePosition(frame_start);
