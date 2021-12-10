@@ -1,6 +1,7 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
+#include <random>
 #include <vector>
 #include <SDL2/SDL.h>
 
@@ -14,6 +15,11 @@ class Renderer {
   void UpdateWindowTitle(int score, int health, int seconds);
   int GetQuadrant(float rads);
   //int CheckHitbox()
+  std::vector<int> RandomPoint();
+  int GetPolarX(float radians, float dist);
+  int GetPolarY(float radians, float dist);
+  float GetRadians(int x, int y);
+  float GetDist(int x, int y);
 
   // Must be public
   SDL_Window *window;

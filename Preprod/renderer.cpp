@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+#include <random>
 #include <SDL2/SDL.h>  
 
 Renderer::Renderer(int framesPerSecond,
@@ -48,6 +49,7 @@ Renderer::~Renderer() {
 void Renderer::Render() {
 
     // -------------------------- Various constants and variables
+    int MAXMARINES = 5;
     std::size_t target_frame_duration{1000 / framesPerSecond};
     bool quit = false;
     SDL_Event event;
@@ -69,7 +71,7 @@ void Renderer::Render() {
     std::vector<int> hitbox;
 
     // Display some debugging info
-    bool DEBUG = true;
+    bool DEBUG = false;
 
 
     // -------------------------- Load assets and sprites
@@ -153,22 +155,31 @@ void Renderer::Render() {
     std::vector<int> removeMarines;
     std::vector<int> removeDead;
 
-    Marine m(350, 300, 1.0);
-    std::vector<int> mSource = m.GetTextureSource(3);
+    // // Starting Position
+    // std::vector<int> pos = RandomPoint();
+    // float ddd = GetDist(pos[0], pos[1]);
+    // std::cout << "xPos: " << pos[0] << "\n";
+    // std::cout << "yPos: " << pos[1] << "\n";
+    // std::cout << "QUAD: " << pos[2] << "\n";
+    // std::cout << "dist: " << ddd << "\n";
+    std::vector<int> pos;
+    // Starting Position
+    pos = RandomPoint();
+    Marine m(pos[0], pos[1], pos[2], 1.0);
+    std::vector<int> mSource = m.GetTextureSource(frame_start);
     std::vector<int> mDest = m.GetTextureDestination();
     SDL_Rect mSRC = { mSource[0], mSource[1], mSource[2], mSource[3] };
     SDL_Rect mDST = { mDest[0], mDest[1], mDest[2], mDest[3] };
     
-    Marine m2(410, 180, 1.0);
-    mSource = m2.GetTextureSource(3);
+    // Starting Position
+    pos = RandomPoint();
+    Marine m2(pos[0], pos[1], pos[2], 1.0);
+    mSource = m2.GetTextureSource(frame_start);
     mDest = m2.GetTextureDestination();
     mSRC = { mSource[0], mSource[1], mSource[2], mSource[3] };
     mDST = { mDest[0], mDest[1], mDest[2], mDest[3] };
 
     marines = {m, m2};
-
-
-
 
 
 
@@ -194,7 +205,8 @@ void Renderer::Render() {
         ycorr = ycoord - screen_height/2;
 
         // Polar coordinates, more specifically: radians, to find angle
-        float rads = atan2(ycorr, xcorr);
+        //float rads = atan2(ycorr, xcorr);
+        float rads = GetRadians(xcorr, ycorr);
         //SDL_Log("Mouse cursor is at %f radians", rads);
 
         QUADRANT = GetQuadrant(rads);
@@ -240,23 +252,27 @@ void Renderer::Render() {
         //     mDST = { mDest[0], mDest[1], mDest[2], mDest[3] };
         //     SDL_RenderCopy(renderer, mrnText, &mSRC, &mDST);
         // }
+        // // Update positions
+        // m.UpdatePosition(frame_start);
+        // m2.UpdatePosition(frame_start);
         for(auto & mrn : marines) {
-            if(mrn.isAlive()) { // Temporary - will remove objects from 'marines'
-                mSource = mrn.GetTextureSource(3);
-                mDest = mrn.GetTextureDestination();
-                mSRC = { mSource[0], mSource[1], mSource[2], mSource[3] };
-                mDST = { mDest[0], mDest[1], mDest[2], mDest[3] };
-                SDL_RenderCopy(renderer, mrnText, &mSRC, &mDST);
-            }
+            //if(mrn.isAlive()) { // Temporary - will remove objects from 'marines'
+            mrn.UpdatePosition(frame_start);
+            mSource = mrn.GetTextureSource(frame_start);
+            mDest = mrn.GetTextureDestination();
+            mSRC = { mSource[0], mSource[1], mSource[2], mSource[3] };
+            mDST = { mDest[0], mDest[1], mDest[2], mDest[3] };
+            SDL_RenderCopy(renderer, mrnText, &mSRC, &mDST);
+            //}
         }
         for(auto & mrn : splat) {
-            if(!mrn.isAlive() && !mrn.isDead()) { // Temporary - will create separate vector for Death Animations
-                mSource = mrn.GetDeathSource(frame_start);
-                mDest = mrn.GetDeathDestination(frame_start);
-                mSRC = { mSource[0], mSource[1], mSource[2], mSource[3] };
-                mDST = { mDest[0], mDest[1], mDest[2], mDest[3] };
-                SDL_RenderCopy(renderer, mrnText, &mSRC, &mDST);
-            }
+            //if(!mrn.isAlive() && !mrn.isDead()) { // Temporary - will create separate vector for Death Animations
+            mSource = mrn.GetDeathSource(frame_start);
+            mDest = mrn.GetDeathDestination(frame_start);
+            mSRC = { mSource[0], mSource[1], mSource[2], mSource[3] };
+            mDST = { mDest[0], mDest[1], mDest[2], mDest[3] };
+            SDL_RenderCopy(renderer, mrnText, &mSRC, &mDST);
+            //}
         }
         // mSource = m.GetTextureSource(3);
         // mDest = m.GetTextureDestination();
@@ -275,16 +291,17 @@ void Renderer::Render() {
                 if(mrn.isAlive()) {
                     hitbox = mrn.GetTextureDestination();
                     if (hitbox[0] < xcoord && hitbox[0] + hitbox[2] > xcoord && hitbox[1] < ycoord && hitbox[1] + hitbox[3] > ycoord) {
-                        std::cout << "HIT!\n";
+                        //std::cout << "HIT!\n";
                         mrn.setAliveFalse();
+                        mrn.setTimeOfDeath(frame_start);
                         marineKills = marineKills + 1;
                         splat.push_back(mrn); // Marine to death animation
                         //marines.erase(mrn);   // Marines out of marines
-                    } else {
-                        std::cout << ".\n";
+                    // } else {
+                    //     std::cout << ".\n";
                     }
-                } else {
-                        std::cout << ".\n";
+                // } else {
+                //         std::cout << ".\n";
                 }
             }
         }
@@ -367,7 +384,7 @@ void Renderer::UpdateWindowTitle(int score, int health, int seconds) {
 }
 
 int Renderer::GetQuadrant(float rads) {
-
+    // Finds quadrant based on rads
     int QUAD;
 
     // Define quadrants
@@ -402,3 +419,57 @@ int Renderer::GetQuadrant(float rads) {
 
     return(QUAD);
 }
+
+std::vector<int> Renderer::RandomPoint() {
+    int QUAD, xPos, yPos;
+
+    // Draw a random point on the screen
+    // Ensures a uniform distribution, i.e. marines come from all directions
+    std::random_device rd; // obtain a random number from hardware
+    std::mt19937 gen(rd()); // seed the generator
+    std::uniform_int_distribution<> distrX(-640, 640); // define the range
+    std::uniform_int_distribution<> distrY(-420, 420); // define the range
+
+    // Initial values
+    xPos = distrX(gen);
+    yPos = distrY(gen);
+
+    // Handle edge case
+    if (xPos == 0 && yPos == 0) {
+        xPos = 1;
+        yPos = 1;
+    }
+    float rads = GetRadians(xPos, yPos);
+    QUAD = GetQuadrant(rads);
+
+    // Find point on circle that is 790 from center (just outside screen)
+    // Also adjust from (0,0) center to screen reference
+    xPos = GetPolarX(rads, 790) + 640;
+    yPos = GetPolarY(rads, 790) + 420;
+
+    // Defining vector and returning
+    std::vector<int> posVector = {xPos, yPos, QUAD};
+    return posVector;
+}
+
+int Renderer::GetPolarX(float radians, float dist) {
+    return round(dist*cos(radians));
+}
+int Renderer::GetPolarY(float radians, float dist) {
+    return round(dist*sin(radians));
+}
+
+float Renderer::GetRadians(int x, int y) {
+    return atan2(y, x);
+}
+
+float Renderer::GetDist(int x, int y) {
+    x = x - 640;
+    y = y - 420;
+    float dist = sqrt(x*x + y*y);
+    return dist;
+}
+
+        // // Calculating corrected points: (0,0) in the center
+        // xcorr = xcoord - screen_width/2;
+        // ycorr = ycoord - screen_height/2;
