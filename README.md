@@ -1,12 +1,13 @@
-# CPPND: Capstone Snake Game Example
+# CPPND: WarGame Capstone
 
-This is a starter repo for the Capstone project in the [Udacity C++ Nanodegree Program](https://www.udacity.com/course/c-plus-plus-nanodegree--nd213). The code for this repo was inspired by [this](https://codereview.stackexchange.com/questions/212296/snake-game-in-c-with-sdl) excellent StackOverflow post and set of responses.
+This is my submission for the Capstone project in the [Udacity C++ Nanodegree Program](https://www.udacity.com/course/c-plus-plus-nanodegree--nd213). The code was partly based on the Snake Game repository.
 
-<img src="snake_game.gif"/>
+<img src="WarGame.png"/>
 
-The Capstone Project gives you a chance to integrate what you've learned throughout this program. This project will become an important part of your portfolio to share with current and future colleagues and employers.
+## Game Instructions
 
-In this project, you can build your own C++ application or extend this Snake game, following the principles you have learned throughout this Nanodegree Program. This project will demonstrate that you can independently create applications using a wide range of C++ features.
+You control a gun turret in enemy territory. Kill as many marines as you can before you are overwhelmed!
+You have unlimited bullets and no overheating, so it's a good idea to just hold in the mouse button. 
 
 ## Dependencies for Running Locally
 * cmake >= 3.7
@@ -35,8 +36,8 @@ sudo apt install libsdl2-image-dev
 ## Basic Build Instructions
 
 1. Clone this repo.
-2. Make a build directory in the top level directory: `mkdir build && cd build`
-3. Compile: `cmake .. && make`
+2. Go to `src` directory.
+3. Compile: `make all`
 4. Run it: `./WarGame`.
 
 
@@ -56,7 +57,8 @@ This work is licensed under a
 
 ## Resources Used
 
-Here are a few tutorials for using SDL2 in C++ which I think I will use a bit.
+Here are a few tutorials for using SDL2 in C++ which I used a bit in addition to many
+lookups on StackExchange and similar sites.
 
 * https://gigi.nullneuron.net/gigilabs/writing/sdl2-tutorials/
 * https://lazyfoo.net/tutorials/SDL/
